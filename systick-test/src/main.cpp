@@ -18,6 +18,7 @@ int main() {
 
     exception_set_exclusive_handler(SYSTICK_EXCEPTION, [] () {
         systickIsrCount++;
+        std::cout << "systick isr ctr: " << systickIsrCount << std::endl;
     });
 
     systick_hw->rvr = 12500000; /* 0.1 seconds at 125Mhz */
@@ -26,10 +27,10 @@ int main() {
 
     systick_hw->csr = systick_hw->csr | 1;
 
-    for (uint64_t i = 0; i < 1000000000; i++){
-        std::cout << "systick isr ctr: " << systickIsrCount << std::endl;
-        sleep_us(10000);
-    }
+    // for (uint64_t i = 0; i < 1000000000; i++){
+    //     // std::cout << "systick isr ctr: " << systickIsrCount << std::endl;
+    //     sleep_us(10000);
+    // }
 
     for (;;);
 }
