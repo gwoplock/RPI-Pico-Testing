@@ -4,22 +4,21 @@
 #include <pico/stdlib.h>
 #include <hardware/structs/systick.h>
 #include <iostream>
+#include "hardware/exception.h"
 
-volatile uint64_t systickIsrCount = 0;
-
-extern void isr_systick()
-{
-    systickIsrCount++;
-    // std::cout << "systick isr: " << systickIsrCount << std::endl;
-}
+volatile static uint64_t systickIsrCount = 0;
 
 int main() {
     stdio_init_all();
 
     systick_hw->csr = 
         0 | /*enable, false*/ 
-        (1 << 1) | /*interrupt enable, false*/ 
+        (1 << 1) | /*interrupt enable, true*/ 
         (1 << 2); /*clock source, processor*/
+
+    exception_set_exclusive_handler(SYSTICK_EXCEPTION, [] () {
+        systickIsrCount++;
+    });
 
     systick_hw->rvr = 12500000; /* 0.1 seconds at 125Mhz */
 
